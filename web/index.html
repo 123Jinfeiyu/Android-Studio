@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Android Studio — 安卓真机浏览器控制台</title>
+<link rel="stylesheet" href="/web/app.css">
+</head>
+<body data-theme="dark">
+
+<!-- ══════════ 顶栏 ══════════ -->
+<header id="topbar">
+  <div class="brand">🤖 Android Studio</div>
+  <button id="conn-pill" class="pill" title="点击重新连接">
+    <span class="dot"></span><span id="conn-text">连接中…</span>
+  </button>
+  <div id="dev-meta" class="meta"></div>
+  <div class="spacer"></div>
+  <button id="btn-help" class="ghost">?</button>
+  <button id="btn-theme" class="ghost" title="明暗主题">🌓</button>
+</header>
+
+<!-- ══════════ 主体 ══════════ -->
+<main id="layout">
+
+  <!-- 左栏：设备控制 -->
+  <aside id="left">
+    <div class="card">
+      <div class="row">
+        <button id="btn-portrait"  class="side-btn">竖屏</button>
+        <button id="btn-landscape" class="side-btn">横屏</button>
+        <button id="btn-rotate-view" class="side-btn" title="画面旋转预览，坐标自动逆映射">旋转画面</button>
+      </div>
+      <div class="row dir-grid">
+        <button class="dir-btn" data-dir="left">←</button>
+        <button class="dir-btn" data-dir="up">↑</button>
+        <button class="dir-btn" data-dir="down">↓</button>
+        <button class="dir-btn" data-dir="right">→</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">快捷按键</div>
+      <div class="grid3">
+        <button data-key="3">主屏</button>
+        <button data-key="4">返回</button>
+        <button data-key="187">多任务</button>
+        <button id="btn-wake">亮屏</button>
+        <button id="btn-lock">锁屏</button>
+        <button id="btn-unlock">解锁</button>
+        <button data-key="24">音量+</button>
+        <button data-key="25">音量−</button>
+        <button id="btn-notify">通知栏</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">文本输入 <span class="hint">中文需设备装 ADBKeyboard</span></div>
+      <div class="row">
+        <input id="txt-input" type="text" placeholder="输入文本，回车发送">
+        <button id="btn-send-text" class="primary">发送</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">应用</div>
+      <div class="row">
+        <input id="pkg-input" type="text" placeholder="包名，如 com.xingin.xhs">
+        <button id="btn-launch" class="primary">启动</button>
+        <button id="btn-terminate" class="danger">结束</button>
+      </div>
+      <div class="row">
+        <button id="btn-foreground">前台应用</button>
+        <button id="btn-apps">应用列表</button>
+        <button id="btn-kill-bg" class="danger">清理后台</button>
+      </div>
+      <div id="pkg-out" class="out"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">安装 APK（上传到设备）</div>
+      <input id="apk-file" type="file" accept=".apk">
+      <button id="btn-install" class="primary block">📦 安装 APK</button>
+      <div id="apk-out" class="out"></div>
+    </div>
+  </aside>
+
+  <!-- 中央：画面 -->
+  <section id="center">
+    <div id="screen-toolbar">
+      <select id="fps-gear">
+        <option value="off">画面：关闭</option>
+        <option value="mjpeg">MJPEG 流</option>
+        <option value="0.2">0.2s/帧</option>
+        <option value="0.5" selected>0.5s/帧</option>
+        <option value="1">1s/帧</option>
+        <option value="2">2s/帧</option>
+        <option value="3">3s/帧</option>
+        <option value="5">5s/帧</option>
+      </select>
+      <button id="btn-refresh">刷新</button>
+      <button id="btn-save">存图</button>
+      <button id="btn-full">⛶ 全屏</button>
+      <button id="btn-fill">铺满</button>
+      <span id="frame-info" class="hint"></span>
+    </div>
+    <div id="screen-wrap">
+      <img id="screen" alt="设备画面" draggable="false">
+    </div>
+  </section>
+
+  <!-- 右栏：编程 -->
+  <aside id="right">
+    <nav id="tabs">
+      <button class="tab active" data-tab="editor">编辑器</button>
+      <button class="tab" data-tab="scripts">脚本库</button>
+      <button class="tab" data-tab="tree">元素树</button>
+      <button class="tab" data-tab="api">API 速查</button>
+    </nav>
+
+    <div id="tab-editor" class="tabpane">
+      <div class="row">
+        <input id="script-name" type="text" value="01_设备体检.py">
+        <button id="btn-save-script" title="Ctrl/⌘+S">保存</button>
+      </div>
+      <textarea id="editor" spellcheck="false"></textarea>
+      <div class="row">
+        <button id="btn-run" class="primary grow" title="Ctrl/⌘+Enter">▶ 运行</button>
+        <button id="btn-stop" class="danger">■ 停止</button>
+      </div>
+    </div>
+
+    <div id="tab-scripts" class="tabpane hidden">
+      <div id="script-list" class="list"></div>
+    </div>
+
+    <div id="tab-tree" class="tabpane hidden">
+      <div class="row"><button id="btn-tree" class="primary">抓取元素树</button></div>
+      <pre id="tree-out" class="out scroll"></pre>
+    </div>
+
+    <div id="tab-api" class="tabpane hidden">
+      <pre id="api-ref" class="out scroll"></pre>
+    </div>
+
+    <div class="card grow" id="log-card">
+      <div class="card-title">实时日志</div>
+      <pre id="logs" class="out scroll"></pre>
+    </div>
+  </aside>
+</main>
+
+<!-- 帮助弹窗 -->
+<div id="modal-help" class="modal hidden">
+  <div class="modal-body">
+    <h2>Android Studio 使用说明</h2>
+    <ul>
+      <li><b>连接</b>：手机开启 USB 调试后插上电脑；或 <code>adb connect IP:5555</code> 网络连接。服务每 6 秒自动探测。</li>
+      <li><b>画面</b>：左侧选刷新档位；MJPEG 流最流畅，但设备端 screencap 每帧约 0.3–1s，真实帧率约 1–2 fps。</li>
+      <li><b>触控</b>：画面上点击=轻触、拖拽=滑动；坐标按实时 <code>wm size</code> 的物理像素换算。</li>
+      <li><b>横屏</b>：「横屏」按钮通过 <code>user_rotation</code> 强制旋转（多数设备免 root 可用）；「旋转画面」只旋转预览并逆映射坐标。</li>
+      <li><b>脚本</b>：Ctrl/⌘+Enter 运行，Ctrl/⌘+S 保存；循环里用 <code>device.sleep()</code> 以便「停止」及时中断。</li>
+      <li><b>中文输入</b>：安装 <a href="https://github.com/senzhk/ADBKeyBoard" target="_blank">ADBKeyboard</a> 后 <code>device.text("中文")</code> 自动走广播通道。</li>
+      <li><b>安全</b>：在线脚本可执行任意 Python，服务默认只监听 127.0.0.1，<code>--host 0.0.0.0</code> 仅限可信局域网。</li>
+    </ul>
+    <button id="btn-close-help" class="primary">知道了</button>
+  </div>
+</div>
+
+<script src="/web/app.js"></script>
+</body>
+</html>

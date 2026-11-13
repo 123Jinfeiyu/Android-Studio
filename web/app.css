@@ -1,0 +1,146 @@
+/* Android Studio — 布局 / 横屏 / 全屏 / 主题（零依赖） */
+
+:root {
+  --bg: #0f1115; --panel: #171a21; --panel2: #1d222c; --line: #2a3040;
+  --text: #dde3ee; --dim: #8b93a7; --accent: #4f8cff; --accent2: #7c5cff;
+  --danger: #ff5b5b; --ok: #34c98e; --radius: 10px;
+}
+body[data-theme="light"] {
+  --bg: #f2f4f8; --panel: #ffffff; --panel2: #f6f8fb; --line: #dde3ec;
+  --text: #22283a; --dim: #6b7280; --accent: #2f6fdb; --accent2: #6d4fd8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--text);
+  font: 13px/1.5 "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+
+button, input, select, textarea {
+  font: inherit; color: var(--text); background: var(--panel2);
+  border: 1px solid var(--line); border-radius: 8px; padding: 5px 10px;
+  cursor: pointer; outline: none;
+}
+button:hover { border-color: var(--accent); }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.danger  { background: transparent; border-color: var(--danger); color: var(--danger); }
+button.ghost   { background: transparent; }
+button.block   { width: 100%; margin-top: 8px; }
+button.grow    { flex: 1; }
+input, textarea, select { cursor: text; }
+
+/* ── 顶栏 ── */
+#topbar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 14px; background: var(--panel);
+  border-bottom: 1px solid var(--line); flex: none;
+}
+.brand { font-weight: 700; font-size: 15px; }
+.pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  border-radius: 999px; padding: 4px 12px;
+}
+.pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); }
+.pill.on .dot  { background: var(--ok); box-shadow: 0 0 6px var(--ok); }
+.pill.off .dot { background: var(--danger); }
+.meta { color: var(--dim); font-size: 12px; }
+.spacer { flex: 1; }
+
+/* ── 三栏布局 ── */
+#layout {
+  flex: 1; display: grid; gap: 10px; padding: 10px;
+  grid-template-columns: 240px 1fr 400px;
+  min-height: 0;
+}
+aside { display: flex; flex-direction: column; gap: 10px; overflow-y: auto; min-height: 0; }
+
+.card {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 10px;
+}
+.card-title { font-weight: 600; margin-bottom: 8px; font-size: 12px; color: var(--dim); }
+.card-title .hint { font-weight: 400; margin-left: 4px; }
+.row { display: flex; gap: 6px; margin-bottom: 6px; flex-wrap: wrap; }
+.row:last-child { margin-bottom: 0; }
+.row input[type=text] { flex: 1; min-width: 0; }
+.hint { color: var(--dim); font-size: 11px; }
+
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.grid3 button, .dir-grid .dir-btn { padding: 7px 4px; }
+.dir-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
+
+.out {
+  margin-top: 6px; padding: 6px 8px; background: var(--panel2);
+  border-radius: 6px; font-size: 12px; white-space: pre-wrap;
+  word-break: break-all; max-height: 150px; overflow-y: auto; color: var(--dim);
+}
+.out.scroll { flex: 1; max-height: none; }
+
+/* ── 中央画面 ── */
+#center { display: flex; flex-direction: column; gap: 8px; min-width: 0; min-height: 0; }
+#screen-toolbar {
+  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 8px 10px;
+}
+#screen-wrap {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius); overflow: hidden; position: relative; min-height: 0;
+}
+#screen { max-width: 100%; max-height: 100%; object-fit: contain; user-select: none; transition: transform .2s; }
+body[data-rot="90"] #screen { transform: rotate(90deg); }
+body[data-rot="270"] #screen { transform: rotate(-90deg); }
+#screen-wrap.fill #screen { width: 100%; height: 100%; object-fit: fill; }
+
+/* ── 右栏 tabs ── */
+#tabs { display: flex; gap: 4px; }
+.tab { flex: 1; border-radius: 8px 8px 0 0; border-bottom: none; }
+.tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.tabpane { background: var(--panel); border: 1px solid var(--line); padding: 10px; display: flex; flex-direction: column; gap: 8px; min-height: 260px; }
+.hidden { display: none !important; }
+
+#editor {
+  flex: 1; min-height: 220px; resize: none; font-family: Consolas, "Cascadia Code", monospace;
+  font-size: 12.5px; line-height: 1.5; tab-size: 4; white-space: pre;
+}
+
+.list { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.script-item {
+  display: flex; align-items: center; gap: 6px; padding: 6px 8px;
+  background: var(--panel2); border-radius: 6px; cursor: pointer;
+}
+.script-item:hover { outline: 1px solid var(--accent); }
+.script-item .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+#api-ref, #tree-out { font-family: Consolas, monospace; font-size: 12px; }
+#tree-out { color: var(--accent2); }
+
+#log-card { flex: 1; min-height: 120px; display: flex; flex-direction: column; }
+#logs { flex: 1; font-family: Consolas, monospace; font-size: 12px; max-height: 220px; }
+
+/* ── 弹窗 ── */
+.modal {
+  position: fixed; inset: 0; background: rgba(0,0,0,.5);
+  display: flex; align-items: center; justify-content: center; z-index: 99;
+}
+.modal-body {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+  padding: 20px 24px; max-width: 620px; max-height: 80vh; overflow-y: auto;
+}
+.modal-body h2 { margin-bottom: 12px; }
+.modal-body ul { margin: 0 0 14px 18px; display: grid; gap: 8px; }
+.modal-body code { background: var(--panel2); padding: 1px 5px; border-radius: 4px; }
+.modal-body a { color: var(--accent); }
+
+/* ── 全屏模式：只留画面 ── */
+body.full #topbar, body.full #left, body.full #right, body.full #screen-toolbar { display: none; }
+body.full #layout { grid-template-columns: 1fr; padding: 0; gap: 0; }
+
+/* ── 窄屏 ── */
+@media (max-width: 1100px) {
+  #layout { grid-template-columns: 1fr; overflow-y: auto; }
+  #center { min-height: 420px; }
+}
